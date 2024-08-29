@@ -8,7 +8,7 @@
     }
   ],
   "type": "library",
-  "license": "VehoWork",
+  "license": "MIT",
   "autoload": {
     "psr-4": {
       "VehoDev\\S3Logger\\": "src/"
