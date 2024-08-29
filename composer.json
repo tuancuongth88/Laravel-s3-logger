@@ -1,0 +1,27 @@
+{
+  "name": "veho-dev/s3-logger",
+  "description": "A Laravel package to log messages to AWS S3",
+  "authors": [
+    {
+      "name": "tuancuong",
+      "email": "tuancuongth88@gmail.com"
+    }
+  ],
+  "type": "library",
+  "license": "VehoWork",
+  "autoload": {
+    "psr-4": {
+      "VehoDev\\S3Logger\\": "src/"
+    }
+  },
+  "require": {
+    "aws/aws-sdk-php": "^3.0"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "VehoDev\\S3Logger\\Providers\\S3LoggerServiceProvider"
+      ]
+    }
+  }
+}
