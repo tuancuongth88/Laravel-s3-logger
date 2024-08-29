@@ -7,6 +7,7 @@ namespace VehoDev\S3Logger\Services;
 use Illuminate\Support\Facades\File;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
+use Monolog\LogRecord;
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Storage;
 
@@ -31,7 +32,7 @@ class S3Handler extends AbstractProcessingHandler
         parent::__construct($level, $bubble);
     }
 
-    protected function write(array $record): void
+    protected function write(LogRecord  $record): void
     {
         $message = (string) $record['formatted'];
         $filename = $this->projectName . '/logs/' . date('Y-m-d') . '.log';
