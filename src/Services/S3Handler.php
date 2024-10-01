@@ -20,16 +20,52 @@ class S3Handler extends AbstractProcessingHandler
     public function __construct($projectName, $config, $level = Logger::DEBUG, $bubble = true)
     {
         $this->projectName = $projectName;
-        $this->client = new S3Client([
-            'version' => $config['version'],
-            'region' => $config['region'],
-            'credentials' => [
-                'key' => $config['key'],
-                'secret' => $config['secret'],
-            ],
-        ]);
+        $this->client = new S3Client($this->configAwsSDK($config));
         $this->bucket = $config['bucket'];
         parent::__construct($level, $bubble);
+    }
+
+    public function configAwsSDK($config)
+    {
+        $env = config('app.env');
+        if ($env !== 'local') {
+            $param = [
+                'version' => 'latest',
+                'region' => $config['region']
+            ];
+
+            if ($env === 'stage' || $env === 'product') { // case: access a server other than server 240
+                $stsClient = new StsClient($param);
+
+                // Assume IAM role atmtc để lấy temporary credentials
+                $assumeRoleResult = $stsClient->assumeRole([
+                    'RoleArn' => $config['roleArn'],
+                    'RoleSessionName' => $config['roleSessionName']
+                ]);
+
+                // Lấy temporary credentials từ AssumeRoleResult
+                $credentials = $assumeRoleResult['Credentials'];
+                $param = [
+                    'version' => 'latest',
+                    'region' => $config['region'],
+                    'credentials' => [
+                        'key' => $credentials['AccessKeyId'],
+                        'secret' => $credentials['SecretAccessKey'],
+                        'token' => $credentials['SessionToken']
+                    ]
+                ];
+            }
+        } else {
+            $param = [
+                'version' => $config['version'],
+                'region' => $config['region'],
+                'credentials' => [
+                    'key' => $config['key'],
+                    'secret' => $config['secret'],
+                ],
+            ];
+        }
+        return $param;
     }
 
     protected function write(LogRecord  $record): void
