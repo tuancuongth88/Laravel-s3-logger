@@ -80,6 +80,30 @@ class S3LoggerController
         return view('s3loggerView::s3logger.show', compact('folder', 'paginatedItems'));
     }
 
+    public function synchronize($folder)
+    {
+        // get log crud
+        $logPath = storage_path('logs/crud');
+        if (File::exists($logPath)){
+            $files = File::files($logPath);
+            foreach ($files as $file) {
+                $fileName = $file->getBasename();
+                $filePath = $folder . "/logs/$fileName";
+                // Đọc nội dung file
+                $fileContent = File::get($file->getRealPath());
+                // Push or update file s3 and clear log
+                Storage::disk('s3')->put($filePath,
+                    (Storage::disk('s3')->exists($filePath)
+                        ? Storage::disk('s3')->get($filePath) . "\n" : '') . $fileContent
+                );
+
+                File::delete($file->getRealPath());
+            }
+        }
+
+        return redirect()->route('s3logger.show', ['log' => $folder]);
+    }
+
     public function showLogFile($folder, $fileName){
         $filePath = $folder . "/logs/$fileName";
         // Check if the file exists
