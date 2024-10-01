@@ -35,7 +35,7 @@ class S3Handler extends AbstractProcessingHandler
     protected function write(LogRecord  $record): void
     {
         $message = (string) $record['formatted'];
-        $filename = $this->projectName . '/logs/' . date('Y-m-d') . '.log';
+        $filename = $this->projectName . '/logs/' . 'crud-' . date('Y-m-d') . '.log';
         // Fetch the existing log content from S3
         $existingLog = null;
         try {
@@ -62,21 +62,22 @@ class S3Handler extends AbstractProcessingHandler
         ]);
 
         // Schedule log deletion from local storage
-        // $this->deleteLocalLogs();
+        $this->deleteLocalLogs($filename);
     }
 
-    protected function deleteLocalLogs()
+    protected function deleteLocalLogs($filename)
     {
-        $logPath = storage_path('logs/crud');
+        $logPath = storage_path("logs/crud/$filename");
         if (File::exists($logPath)){
-            $files = File::files($logPath);
-            foreach ($files as $file) {
-                // Check if the file is older than one week
-                if (now()->subWeek()->timestamp > $file->getMTime()) {
-                    // Delete the file if it's older than one week
-                    File::delete($file->getRealPath());
-                }
-            }
+            File::delete($logPath);
+//            $files = File::files($logPath);
+//            foreach ($files as $file) {
+//                // Check if the file is older than one week
+//                if (now()->subWeek()->timestamp > $file->getMTime()) {
+//                    // Delete the file if it's older than one week
+//                    File::delete($file->getRealPath());
+//                }
+//            }
         }
     }
 }
