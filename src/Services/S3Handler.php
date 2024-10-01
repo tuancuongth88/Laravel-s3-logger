@@ -62,7 +62,7 @@ class S3Handler extends AbstractProcessingHandler
         ]);
 
         // Schedule log deletion from local storage
-        $this->deleteLocalLogs();
+        // $this->deleteLocalLogs();
     }
 
     protected function deleteLocalLogs()
