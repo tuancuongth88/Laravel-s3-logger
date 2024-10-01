@@ -25,13 +25,13 @@ class S3Handler extends AbstractProcessingHandler
         parent::__construct($level, $bubble);
     }
 
-    public function configAwsSDK($config)
+    public function configAwsSDK()
     {
         $env = config('app.env');
         if ($env !== 'local') {
             $param = [
                 'version' => 'latest',
-                'region' => $config['region']
+                'region' => config('s3logger.region')
             ];
 
             if ($env === 'stage' || $env === 'product') { // case: access a server other than server 240
@@ -39,15 +39,15 @@ class S3Handler extends AbstractProcessingHandler
 
                 // Assume IAM role atmtc để lấy temporary credentials
                 $assumeRoleResult = $stsClient->assumeRole([
-                    'RoleArn' => $config['roleArn'],
-                    'RoleSessionName' => $config['roleSessionName']
+                    'RoleArn' => config('s3logger.roleArn'),
+                    'RoleSessionName' => config('s3logger.roleSessionName')
                 ]);
 
                 // Lấy temporary credentials từ AssumeRoleResult
                 $credentials = $assumeRoleResult['Credentials'];
                 $param = [
                     'version' => 'latest',
-                    'region' => $config['region'],
+                    'region' => config('s3logger.region'),
                     'credentials' => [
                         'key' => $credentials['AccessKeyId'],
                         'secret' => $credentials['SecretAccessKey'],
@@ -57,11 +57,11 @@ class S3Handler extends AbstractProcessingHandler
             }
         } else {
             $param = [
-                'version' => $config['version'],
-                'region' => $config['region'],
+                'version' => config('s3logger.version'),
+                'region' => config('s3logger.region'),
                 'credentials' => [
-                    'key' => $config['key'],
-                    'secret' => $config['secret'],
+                    'key' => config('s3logger.key'),
+                    'secret' => config('s3logger.secret'),
                 ],
             ];
         }
