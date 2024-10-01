@@ -15,14 +15,50 @@ class S3LoggerController
 
     public function __construct()
     {
-        $this->s3Client = new S3Client([
+        $this->s3Client = new S3Client($this->configAwsSDK());
+    }
+
+    public function configAwsSDK()
+    {
+        $env = config('app.env');
+        if ($env !== 'local') {
+            $param = [
+                'version' => 'latest',
+                'region' => config('s3logger.region')
+            ];
+
+            if ($env === 'stage' || $env === 'product') { // case: access a server other than server 240
+                $stsClient = new StsClient($param);
+
+                // Assume IAM role atmtc để lấy temporary credentials
+                $assumeRoleResult = $stsClient->assumeRole([
+                    'RoleArn' => config('s3logger.roleArn'),
+                    'RoleSessionName' => config('s3logger.roleSessionName')
+                ]);
+
+                // Lấy temporary credentials từ AssumeRoleResult
+                $credentials = $assumeRoleResult['Credentials'];
+                $param = [
+                    'version' => 'latest',
+                    'region' => config('s3logger.region'),
+                    'credentials' => [
+                        'key' => $credentials['AccessKeyId'],
+                        'secret' => $credentials['SecretAccessKey'],
+                        'token' => $credentials['SessionToken']
+                    ]
+                ];
+            }
+        } else {
+            $param = [
                 'version' => config('s3logger.version'),
                 'region' => config('s3logger.region'),
                 'credentials' => [
                     'key' => config('s3logger.key'),
                     'secret' => config('s3logger.secret'),
                 ],
-            ]);
+            ];
+        }
+        return $param;
     }
 
     public function index()
@@ -77,6 +113,30 @@ class S3LoggerController
         // Đặt URL đúng cho các liên kết phân trang
         $paginatedItems->setPath(request()->url());
         return view('s3loggerView::s3logger.show', compact('folder', 'paginatedItems'));
+    }
+
+    public function synchronize($folder)
+    {
+        // get log crud
+        $logPath = storage_path('logs/crud');
+        if (File::exists($logPath)){
+            $files = File::files($logPath);
+            foreach ($files as $file) {
+                $fileName = $file->getBasename();
+                $filePath = $folder . "/logs/$fileName";
+                // Đọc nội dung file
+                $fileContent = File::get($file->getRealPath());
+                // Push or update file s3 and clear log
+                Storage::disk('s3')->put($filePath,
+                    (Storage::disk('s3')->exists($filePath)
+                        ? Storage::disk('s3')->get($filePath) . "\n" : '') . $fileContent
+                );
+
+                File::delete($file->getRealPath());
+            }
+        }
+
+        return redirect()->route('s3logger.show', ['log' => $folder]);
     }
 
     public function showLogFile($folder, $fileName){
