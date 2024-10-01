@@ -1,7 +1,10 @@
 @extends('s3loggerView::layout.app')
 @section('title', 'File List '. $folder)
 @section('content')
-    <h1>Files in {{ $folder }}</h1>
+    <div style="display: flex;align-items: center; gap: 30px;">
+        <h1>Files in {{ $folder }}</h1>
+        <a href="{{ route('s3logger.synchronize', [$folder]) }}">Synchronize Log</a>
+    </div>
     <table class="table table-bordered">
         <thead>
         <tr>
