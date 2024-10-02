@@ -15,8 +15,8 @@
     }
   },
   "require": {
-    "aws/aws-sdk-php": "^3.0",
-    "league/flysystem-aws-s3-v3": "^3.29"
+    "aws/aws-sdk-php": "*",
+    "league/flysystem-aws-s3-v3": "*"
   },
   "extra": {
     "laravel": {
