@@ -9,6 +9,7 @@ use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
 use Monolog\LogRecord;
 use Aws\S3\S3Client;
+use Aws\Sts\StsClient;
 use Illuminate\Support\Facades\Storage;
 
 class S3Handler extends AbstractProcessingHandler
