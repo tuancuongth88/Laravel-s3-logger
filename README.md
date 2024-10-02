@@ -31,6 +31,9 @@ AWS_SECRET_ACCESS_KEY=your_secret_key
 AWS_DEFAULT_REGION=your_region
 AWS_S3_BUCKET=your_bucket_name
 APP_NAME=your_project_name
+AWS_Role_Arn=your_role_key
+AWS_Role_Session_Name=your_role_session_name
+ASSUME_ROLE=have_assume_role_yes_or_not
 
 ```
 - `AWS_ACCESS_KEY_ID`: Your AWS access key.
@@ -38,6 +41,9 @@ APP_NAME=your_project_name
 - `AWS_DEFAULT_REGION`: The AWS region where your S3 bucket is located.
 - `AWS_S3_BUCKET`: The name of your S3 bucket.
 - `APP_NAME`: The name of your project (used for folder separation in S3).
+- `AWS_Role_Arn`: Your AWS IAM Role key
+- `AWS_Role_Session_Name`: Your AWS IAM Role session name
+- `ASSUME_ROLE`: True if this project have AWS_Role_Arn or AWS_Role_Session_Name
 
 ## Usage
 
