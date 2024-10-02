@@ -26,24 +26,24 @@ php artisan vendor:publish --provider="VehoDev\S3Logger\S3LoggerServiceProvider"
 Add the following environment variables to your .env file:
 
 ```
-AWS_ACCESS_KEY_ID=your_access_key
-AWS_SECRET_ACCESS_KEY=your_secret_key
-AWS_DEFAULT_REGION=your_region
-AWS_S3_BUCKET=your_bucket_name
+LOG3_AWS_ACCESS_KEY_ID=your_access_key
+LOG3_AWS_SECRET_ACCESS_KEY=your_secret_key
+LOG3_AWS_DEFAULT_REGION=your_region
+LOG3_AWS_S3_BUCKET=your_bucket_name
 APP_NAME=your_project_name
-AWS_Role_Arn=your_role_key
-AWS_Role_Session_Name=your_role_session_name
-ASSUME_ROLE=have_assume_role_yes_or_not
+LOG3_AWS_Role_Arn=your_role_key
+LOG3_AWS_Role_Session_Name=your_role_session_name
+LOG3_ASSUME_ROLE=have_assume_role_yes_or_not
 
 ```
-- `AWS_ACCESS_KEY_ID`: Your AWS access key.
-- `AWS_SECRET_ACCESS_KEY`: Your AWS secret key.
-- `AWS_DEFAULT_REGION`: The AWS region where your S3 bucket is located.
-- `AWS_S3_BUCKET`: The name of your S3 bucket.
+- `LOG3_AWS_ACCESS_KEY_ID`: Your AWS access key.
+- `LOG3_AWS_SECRET_ACCESS_KEY`: Your AWS secret key.
+- `LOG3_AWS_DEFAULT_REGION`: The AWS region where your S3 bucket is located.
+- `LOG3_AWS_S3_BUCKET`: The name of your S3 bucket.
 - `APP_NAME`: The name of your project (used for folder separation in S3).
-- `AWS_Role_Arn`: Your AWS IAM Role key
-- `AWS_Role_Session_Name`: Your AWS IAM Role session name
-- `ASSUME_ROLE`: True if this project have AWS_Role_Arn or AWS_Role_Session_Name
+- `LOG3_AWS_Role_Arn`: Your AWS IAM Role key
+- `LOG3_AWS_Role_Session_Name`: Your AWS IAM Role session name
+- `LOG3_ASSUME_ROLE`: True if this project have AWS_Role_Arn or AWS_Role_Session_Name
 
 ## Usage
 
