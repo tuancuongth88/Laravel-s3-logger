@@ -8,4 +8,5 @@ return [
     'secret' => env('AWS_SECRET_ACCESS_KEY'),
     'roleArn' => env('AWS_Role_Arn'),
     'roleSessionName' => env('AWS_Role_Session_Name'),
+    'assumeRole' => env('ASSUME_ROLE'),
 ];
