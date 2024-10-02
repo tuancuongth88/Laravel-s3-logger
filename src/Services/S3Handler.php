@@ -11,6 +11,7 @@ use Monolog\LogRecord;
 use Aws\S3\S3Client;
 use Aws\Sts\StsClient;
 use Illuminate\Support\Facades\Storage;
+use VehoDev\S3Logger\Http\Helpers\Common;
 
 class S3Handler extends AbstractProcessingHandler
 {
@@ -21,52 +22,9 @@ class S3Handler extends AbstractProcessingHandler
     public function __construct($projectName, $config, $level = Logger::DEBUG, $bubble = true)
     {
         $this->projectName = $projectName;
-        $this->client = new S3Client($this->configAwsSDK($config));
+        $this->client = new S3Client(Common::configAwsSDK($config));
         $this->bucket = $config['bucket'];
         parent::__construct($level, $bubble);
-    }
-
-    public function configAwsSDK()
-    {
-        $env = config('app.env');
-        if ($env !== 'local') {
-            $param = [
-                'version' => 'latest',
-                'region' => config('s3logger.region')
-            ];
-
-            if ($env === 'stage' || $env === 'product') { // case: access a server other than server 240
-                $stsClient = new StsClient($param);
-
-                // Assume IAM role atmtc để lấy temporary credentials
-                $assumeRoleResult = $stsClient->assumeRole([
-                    'RoleArn' => config('s3logger.roleArn'),
-                    'RoleSessionName' => config('s3logger.roleSessionName')
-                ]);
-
-                // Lấy temporary credentials từ AssumeRoleResult
-                $credentials = $assumeRoleResult['Credentials'];
-                $param = [
-                    'version' => 'latest',
-                    'region' => config('s3logger.region'),
-                    'credentials' => [
-                        'key' => $credentials['AccessKeyId'],
-                        'secret' => $credentials['SecretAccessKey'],
-                        'token' => $credentials['SessionToken']
-                    ]
-                ];
-            }
-        } else {
-            $param = [
-                'version' => config('s3logger.version'),
-                'region' => config('s3logger.region'),
-                'credentials' => [
-                    'key' => config('s3logger.key'),
-                    'secret' => config('s3logger.secret'),
-                ],
-            ];
-        }
-        return $param;
     }
 
     protected function write(LogRecord  $record): void
@@ -99,22 +57,22 @@ class S3Handler extends AbstractProcessingHandler
         ]);
 
         // Schedule log deletion from local storage
-        $this->deleteLocalLogs($filename);
+        // $this->deleteLocalLogs($filename);
     }
 
-    protected function deleteLocalLogs($filename)
-    {
-        $logPath = storage_path("logs/crud/$filename");
-        if (File::exists($logPath)){
-            File::delete($logPath);
-//            $files = File::files($logPath);
-//            foreach ($files as $file) {
-//                // Check if the file is older than one week
-//                if (now()->subWeek()->timestamp > $file->getMTime()) {
-//                    // Delete the file if it's older than one week
-//                    File::delete($file->getRealPath());
-//                }
-//            }
-        }
-    }
+//    protected function deleteLocalLogs($filename)
+//    {
+//        $logPath = storage_path("logs/crud/$filename");
+//        if (File::exists($logPath)){
+//            File::delete($logPath);
+////            $files = File::files($logPath);
+////            foreach ($files as $file) {
+////                // Check if the file is older than one week
+////                if (now()->subWeek()->timestamp > $file->getMTime()) {
+////                    // Delete the file if it's older than one week
+////                    File::delete($file->getRealPath());
+////                }
+////            }
+//        }
+//    }
 }
