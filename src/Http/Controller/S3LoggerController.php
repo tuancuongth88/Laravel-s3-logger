@@ -6,6 +6,7 @@ namespace VehoDev\S3Logger\Http\Controller;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Aws\S3\S3Client;
+use Aws\Sts\StsClient;
 use Illuminate\Support\Facades\Storage;
 
 class S3LoggerController
