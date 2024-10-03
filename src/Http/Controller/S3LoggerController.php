@@ -86,9 +86,9 @@ class S3LoggerController
                 // Đọc nội dung file
                 $fileContent = File::get($file->getRealPath());
                 // Push or update file s3 and clear log
-                Storage::disk('s3')->put($filePath,
-                    (Storage::disk('s3')->exists($filePath)
-                        ? Storage::disk('s3')->get($filePath) . "\n" : '') . $fileContent
+                Storage::disk('s3logger')->put($filePath,
+                    (Storage::disk('s3logger')->exists($filePath)
+                        ? Storage::disk('s3logger')->get($filePath) . "\n" : '') . $fileContent
                 );
 
                 File::delete($file->getRealPath());
@@ -101,12 +101,12 @@ class S3LoggerController
     public function showLogFile($folder, $fileName){
         $filePath = $folder . "/logs/$fileName";
         // Check if the file exists
-        if (!Storage::disk('s3')->exists($filePath)) {
+        if (!Storage::disk('s3logger')->exists($filePath)) {
             abort(404, 'File not found');
         }
 
         // Retrieve the file contents from S3
-        $fileContents = Storage::disk('s3')->get($filePath);
+        $fileContents = Storage::disk('s3logger')->get($filePath);
         // Pass the contents to the view
         return view('s3loggerView::s3logger.view-log-file', compact('folder','fileName','fileContents'));
     }
@@ -116,6 +116,6 @@ class S3LoggerController
         // Download file from S3
         $bucket = config('s3logger.bucket');
         $key = $folder . '/logs/' . $file;
-        return Storage::disk('s3')->download($key);
+        return Storage::disk('s3logger')->download($key);
     }
 }
