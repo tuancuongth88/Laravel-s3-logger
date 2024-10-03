@@ -30,7 +30,7 @@ class S3Handler extends AbstractProcessingHandler
     protected function write(LogRecord  $record): void
     {
         $message = (string) $record['formatted'];
-        $filename = $this->projectName . '/logs/' . date('Y-m-d') . '.log';
+        $filename = $this->projectName . '/logs/' .'crud-'. date('Y-m-d') . '.log';
         // Fetch the existing log content from S3
         $existingLog = null;
         try {
