@@ -18,7 +18,7 @@ composer require veho-dev/s3-logger
 If you want to customize the configuration, you can publish the package configuration file using the command:
 
 ```php
-php artisan vendor:publish --provider="VehoDev\S3Logger\S3LoggerServiceProvider"
+php artisan vendor:publish --provider="VehoDev\S3Logger\Providers\S3LoggerServiceProvider"
 ```
 
 ### Step 3: Add Environment Variables
