@@ -9,6 +9,7 @@ use Aws\S3\S3Client;
 use Aws\Sts\StsClient;
 use Illuminate\Support\Facades\Storage;
 use VehoDev\S3Logger\Http\Helpers\Common;
+use Illuminate\Support\Facades\File;
 
 class S3LoggerController
 {
