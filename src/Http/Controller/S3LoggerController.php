@@ -88,7 +88,7 @@ class S3LoggerController
                 $fileContent = File::get($file->getRealPath());
                 // Push or update file s3 and clear log
                 Storage::disk('s3logger')->put($filePath,
-                    (Storage::disk('s3logger')->exists($filePath)
+                    (Storage::disk('s3logger')->get($filePath) != null
                         ? Storage::disk('s3logger')->get($filePath) . "\n" : '') . $fileContent
                 );
 
@@ -102,7 +102,7 @@ class S3LoggerController
     public function showLogFile($folder, $fileName){
         $filePath = $folder . "/logs/$fileName";
         // Check if the file exists
-        if (!Storage::disk('s3logger')->exists($filePath)) {
+        if (Storage::disk('s3logger')->get($filePath) == null) {
             abort(404, 'File not found');
         }
 
