@@ -9,7 +9,7 @@ class Common{
     public static function configAwsSDK()
     {
         $checkAssumeRole = config('s3logger.assumeRole');
-        if (!$checkAssumeRole) {
+        if ($checkAssumeRole) {
             $param = [
                 'version' => 'latest',
                 'region' => config('s3logger.region')
