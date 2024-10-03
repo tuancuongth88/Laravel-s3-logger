@@ -42,6 +42,19 @@ class S3LoggerServiceProvider extends ServiceProvider
             $this->mergeConfigFrom(
                 __DIR__ . '/../config/s3logger.php', 's3logger'
             );
+
+            $this->app->make('config')->set('filesystems.disks.s3logger', array_merge([
+                'driver' => 's3',
+                'key' => config('s3logger.key'),
+                'secret' => config('s3logger.secret'),
+                'region' => config('s3logger.region'),
+                'bucket' => config('s3logger.bucket'),
+                'url' => config('s3logger.url', null),
+                'endpoint' => config('s3logger.endpoint', null),
+                'use_path_style_endpoint' => config('s3logger.use_path_style_endpoint', false),
+                'throw' => false,
+            ], config('filesystems.disks.s3logger', [])));
+            
             $this->app->singleton('s3logger', function ($app) {
                 $projectName = config('app.name');
                 $logger = new \Monolog\Logger($projectName);
