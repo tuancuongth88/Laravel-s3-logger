@@ -87,10 +87,15 @@ class S3LoggerController
                 // Đọc nội dung file
                 $fileContent = File::get($file->getRealPath());
                 // Push or update file s3 and clear log
-                Storage::disk('s3logger')->put($filePath,
-                    (Storage::disk('s3logger')->get($filePath) != null
-                        ? Storage::disk('s3logger')->get($filePath) . "\n" : '') . $fileContent
-                );
+                $message = (Storage::disk('s3logger')->get($filePath) != null
+                    ? Storage::disk('s3logger')->get($filePath) . "\n" : '') . $fileContent;
+                // Push or update file s3 and clear log
+                $this->s3Client->putObject([
+                    'Bucket' => $bucket,
+                    'Key' => $filePath,
+                    'Body' => $message,
+                    'ACL' => 'private',
+                ]);
 
                 File::delete($file->getRealPath());
             }
