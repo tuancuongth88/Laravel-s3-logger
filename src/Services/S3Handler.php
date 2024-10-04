@@ -27,7 +27,7 @@ class S3Handler extends AbstractProcessingHandler
         parent::__construct($level, $bubble);
     }
 
-    protected function write(LogRecord  $record): void
+    protected function write($record): void
     {
         $message = (string) $record['formatted'];
         $filename = $this->projectName . '/logs/' .'crud-'. date('Y-m-d') . '.log';
