@@ -79,6 +79,7 @@ class S3LoggerController
     {
         // get log crud
         $logPath = storage_path('logs/crud');
+        $bucket = config('s3logger.bucket');
         if (File::exists($logPath)){
             $files = File::files($logPath);
             foreach ($files as $file) {
