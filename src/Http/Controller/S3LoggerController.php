@@ -3,6 +3,7 @@
 
 namespace VehoDev\S3Logger\Http\Controller;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Aws\S3\S3Client;
