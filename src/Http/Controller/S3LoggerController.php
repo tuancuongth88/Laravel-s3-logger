@@ -88,8 +88,13 @@ class S3LoggerController
                 // Đọc nội dung file
                 $fileContent = File::get($file->getRealPath());
                 // Push or update file s3 and clear log
-                $message = (Storage::disk('s3logger')->get($filePath) != null
-                    ? Storage::disk('s3logger')->get($filePath) . "\n" : '') . $fileContent;
+                $message = '';
+                try {
+                    $message = (Storage::disk('s3logger')->get($filePath) != null
+                            ? Storage::disk('s3logger')->get($filePath) . "\n" : '') . $fileContent;
+                } catch (FileNotFoundException $e){
+                    $message = '' . $fileContent;
+                }
                 // Push or update file s3 and clear log
                 $this->s3Client->putObject([
                     'Bucket' => $bucket,
@@ -108,7 +113,11 @@ class S3LoggerController
     public function showLogFile($folder, $fileName){
         $filePath = $folder . "/logs/$fileName";
         // Check if the file exists
-        if (Storage::disk('s3logger')->get($filePath) == null) {
+        try {
+            if (Storage::disk('s3logger')->get($filePath) == null) {
+                abort(404, 'File not found');
+            }
+        } catch (FileNotFoundException $e){
             abort(404, 'File not found');
         }
 
