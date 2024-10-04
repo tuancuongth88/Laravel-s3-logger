@@ -46,7 +46,7 @@ class LogCrudOperations
             'datetime'  => Carbon::now()->toDateTimeString(),
             'data'      => $request->all(),
         ];
-        Log::channel('crud')->info(json_encode($log));
+        // Log::channel('crud')->info(json_encode($log));
         Log::channel('s3logger')->info(json_encode($log));
     }
 }
