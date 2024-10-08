@@ -9,11 +9,15 @@ class Common{
     public static function configAwsSDK()
     {
         $checkAssumeRole = config('s3logger.assumeRole');
+
+        //server 142: IAM ROLE
+        $param = [
+            'version' => config('s3logger.version'),
+            'region' => config('s3logger.region')
+        ];
+
+        //other server: assumeRole as IAM ROLE of 142 server
         if ($checkAssumeRole) {
-            $param = [
-                'version' => 'latest',
-                'region' => config('s3logger.region')
-            ];
             $stsClient = new StsClient($param);
 
             // Assume IAM role atmtc để lấy temporary credentials
@@ -33,7 +37,10 @@ class Common{
                     'token' => $credentials['SessionToken']
                 ]
             ];
-        } else {
+        }
+
+        // IAM user for local
+        if(!$checkAssumeRole && config('app.env') === 'local'){
             $param = [
                 'version' => config('s3logger.version'),
                 'region' => config('s3logger.region'),
@@ -41,7 +48,7 @@ class Common{
                     'key' => config('s3logger.key'),
                     'secret' => config('s3logger.secret'),
                 ],
-            ];
+            ];    
         }
         return $param;
     }
